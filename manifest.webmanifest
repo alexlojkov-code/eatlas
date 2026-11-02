@@ -1,0 +1,17 @@
+{
+  "name": "Eatlas — дневник питания",
+  "short_name": "Eatlas",
+  "description": "Личный дневник питания с ИИ: фото или текст — и калории посчитаны.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "lang": "ru",
+  "background_color": "#E8E9ED",
+  "theme_color": "#E8E9ED",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
