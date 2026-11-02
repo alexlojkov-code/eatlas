@@ -53,11 +53,18 @@ const T = {
     verify: { subject: 'Confirm your email for Eatlas', title: 'Confirm your email', lead: 'This confirms the address belongs to you, so you can recover your password if you ever forget it.', btn: 'Confirm email', note: 'The link expires in 24 hours. If you didn’t sign up for Eatlas, just ignore this email.' },
     hi: name => (name ? `Hi ${name},` : 'Hi,'), alt: 'If the button doesn’t work, open this link:',
   },
+  uz: {
+    reset: { subject: 'Eatlas parolini tiklash', title: 'Parolni tiklash', lead: 'Kimdir (umid qilamizki, siz) Eatlas akkaunti parolini tiklashni so‘radi. Yangi parol o‘rnatish uchun tugmani bosing.', btn: 'Yangi parol o‘rnatish', note: 'Havola 1 soat amal qiladi va bir marta ishlaydi. Agar tiklashni so‘ramagan bo‘lsangiz, xatga e’tibor bermang — parolingiz o‘zgarmaydi.' },
+    verify: { subject: 'Eatlas uchun pochtangizni tasdiqlang', title: 'Pochtani tasdiqlang', lead: 'Bu xat manzil sizga tegishli ekanini tasdiqlaydi. Shunda parolni unutsangiz, uni tiklay olasiz.', btn: 'Pochtani tasdiqlash', note: 'Havola 24 soat amal qiladi. Agar Eatlasda ro‘yxatdan o‘tmagan bo‘lsangiz, xatga e’tibor bermang.' },
+    hi: name => (name ? `Assalomu alaykum, ${name}!` : 'Assalomu alaykum!'), alt: 'Agar tugma ishlamasa, havolani oching:',
+  },
 };
+// язык письма: ru, en или uz; неизвестный — ru
+export const mailLang = l => (Object.hasOwn(T, l) ? l : 'ru');
 const escHtml = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 export function letter(kind, lang, url, name = '') {
-  const L = T[lang === 'en' ? 'en' : 'ru'], k = L[kind];
+  const L = T[mailLang(lang)], k = L[kind];
   const hi = escHtml(L.hi(String(name).slice(0, 60)));
   const html = `<!doctype html><html><body style="margin:0;background:#E8E9ED;font-family:Arial,Helvetica,sans-serif;color:#0B0B0C">
 <table width="100%" cellpadding="0" cellspacing="0" style="padding:32px 12px"><tr><td align="center">

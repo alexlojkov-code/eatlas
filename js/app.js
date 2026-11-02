@@ -108,13 +108,26 @@ const UI = {
   },
 };
 
-const fmt = (v, d = 0) => (Math.round(v * Math.pow(10, d)) / Math.pow(10, d)).toLocaleString(Store.state.settings.lang === 'en' ? 'en-US' : 'ru-RU');
+const fmt = (v, d = 0) => (Math.round(v * Math.pow(10, d)) / Math.pow(10, d)).toLocaleString(numLocale());
 const nUnit = k => k === 'kcal' ? t('u.kcal') : k.endsWith('_mg') ? t('u.mg') : t('u.g');
-const locale = () => Store.state.settings.lang === 'en' ? 'en-GB' : 'ru-RU';
+const LOCALES = { ru: ['ru-RU', 'ru-RU'], en: ['en-GB', 'en-US'], uz: ['uz-Latn-UZ', 'ru-RU'] }; // числа в Узбекистане пишут как в ru: «2 400», «1,5»
+const locale = () => (LOCALES[Store.state.settings.lang] || LOCALES.ru)[0];
+const numLocale = () => (LOCALES[Store.state.settings.lang] || LOCALES.ru)[1];
+// короткая строка на текущем языке; узбекский без перевода падает на русский
+// даты: в браузерах нет узбекских названий месяцев (выходит «M11»), поэтому для uz — свои
+const UZ_MONTHS = ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr'];
+const UZ_DAYS = ['yakshanba', 'dushanba', 'seshanba', 'chorshanba', 'payshanba', 'juma', 'shanba'];
+function fmtDate(d, o = {}) {
+  if (Store.state.settings.lang !== 'uz') return o.weekday || o.month ? new Intl.DateTimeFormat(locale(), o).format(d) : d.toLocaleDateString(locale());
+  if (o.weekday) return o.weekday === 'short' ? UZ_DAYS[d.getDay()].slice(0, 2).replace(/^./, c => c.toUpperCase()) : UZ_DAYS[d.getDay()];
+  if (o.month) return `${d.getDate()}-${o.month === 'short' ? UZ_MONTHS[d.getMonth()].slice(0, 3) : UZ_MONTHS[d.getMonth()]}`;
+  return `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+}
+const tr = (ru, en, uz) => ({ en, uz }[Store.state.settings.lang] ?? ru);
 function dayTitle(key) {
   const d = parseKey(key);
-  const wd = new Intl.DateTimeFormat(locale(), { weekday: 'long' }).format(d);
-  const dm = new Intl.DateTimeFormat(locale(), { day: 'numeric', month: 'long' }).format(d);
+  const wd = fmtDate(d, { weekday: 'long' });
+  const dm = fmtDate(d, { day: 'numeric', month: 'long' });
   return { wd, dm };
 }
 function relDay(key) {
@@ -122,7 +135,7 @@ function relDay(key) {
   if (key === tk) return t('d.today');
   if (key === addDays(tk, -1)) return t('d.yesterday');
   if (key === addDays(tk, 1)) return t('d.tomorrow');
-  return new Intl.DateTimeFormat(locale(), { day: 'numeric', month: 'short' }).format(parseKey(key));
+  return fmtDate(parseKey(key), { day: 'numeric', month: 'short' });
 }
 const guessMeal = () => { const h = new Date().getHours(); return h >= 5 && h < 11 ? 'breakfast' : h < 16 ? 'lunch' : h < 21 ? 'dinner' : 'snack'; };
 const dayNumber = () => Math.max(1, Math.floor((Date.now() - (Store.state.settings.createdAt || Date.now())) / 864e5) + 1);
@@ -217,7 +230,7 @@ const Shell = {
       <nav class="nav" aria-label="main">${NAV.map(([k, h]) => `<a href="${h}" class="${active === k ? 'on' : ''}">${t('nav.' + k)}</a>`).join('')}</nav>
       ${Cloud.user ? syncBadge() : ''}
       ${themeBtn()}
-      <span class="when">${new Intl.DateTimeFormat(locale(), { day: 'numeric', month: 'long' }).format(new Date())} · ${t('d.day')} ${String(dayNumber()).padStart(3, '0')}</span>`;
+      <span class="when">${fmtDate(new Date(), { day: 'numeric', month: 'long' })} · ${t('d.day')} ${String(dayNumber()).padStart(3, '0')}</span>`;
     dock.innerHTML = NAV.map(([k, h, ic]) => `<a href="${h}" class="${active === k ? 'on' : ''}">${ICON[ic]}<span>${t('nav.' + k)}</span></a>`).join('');
     const showFab = !onb && ['diary', 'day', 'stats', 'meal'].includes(name);
     fab.hidden = !showFab;
@@ -426,7 +439,7 @@ Views.welcome = {
     const s = onb.step;
     const ghost = `<div class="ghost outline" aria-hidden="true"><div class="track"><span>Eatlas · ${t('app.diary')} · </span><span>Eatlas · ${t('app.diary')} · </span></div></div>`;
     const head = `<div class="row" style="position:relative;z-index:1"><span class="brand"><span class="logo">${ICON.mono}</span><b>Eatlas</b></span><span class="spacer"></span>${themeBtn()}
-      <div class="seg" id="olang"><button aria-pressed="${Store.state.settings.lang === 'ru'}" data-l="ru">RU</button><button aria-pressed="${Store.state.settings.lang === 'en'}" data-l="en">EN</button></div></div>`;
+      <div class="seg" id="olang"><button aria-pressed="${Store.state.settings.lang === 'ru'}" data-l="ru">RU</button><button aria-pressed="${Store.state.settings.lang === 'en'}" data-l="en">EN</button><button aria-pressed="${Store.state.settings.lang === 'uz'}" data-l="uz">UZ</button></div></div>`;
     if (s === 0) return `<div class="onb">${head}
       <div class="content">
         <span class="kicker rv">${t('onb.kicker')}</span>
@@ -736,7 +749,7 @@ Views.diary = {
     // неделя вокруг выбранного дня (пн–вс)
     const d0 = parseKey(key); const dow = (d0.getDay() + 6) % 7;
     const weekKeys = Array.from({ length: 7 }, (_, i) => addDays(key, i - dow));
-    const wdFmt = new Intl.DateTimeFormat(locale(), { weekday: 'short' });
+    const wdFmt = { format: d => fmtDate(d, { weekday: 'short' }) };
     const extra = [['fiber_g', 'min'], ['sugar_g', 'max'], ['sat_fat_g', 'max'], ['sodium_mg', 'max'], ['cholesterol_mg', 'max']];
     return `
     <section class="diary-hero">
@@ -784,12 +797,12 @@ Views.diary = {
     </section>
 
     <section class="section">
-      <div class="sec-head"><h2 class="h2">${UI.split(Store.state.settings.lang === 'en' ? 'Meals' : 'Приёмы пищи')}</h2></div>
+      <div class="sec-head"><h2 class="h2">${UI.split(tr('Приёмы пищи', 'Meals', 'Ovqatlanishlar'))}</h2></div>
       <div class="meals">${MEALS.map((m, i) => mealCard(key, m, day, i)).join('')}</div>
     </section>
 
     <section class="note">
-      <div><span class="kicker">${t('d.note')}</span><h2 class="h2" style="margin-top:10px">${UI.split(Store.state.settings.lang === 'en' ? 'Dear diary' : 'Дорогой дневник')}</h2></div>
+      <div><span class="kicker">${t('d.note')}</span><h2 class="h2" style="margin-top:10px">${UI.split(tr('Дорогой дневник', 'Dear diary', 'Aziz kundalik'))}</h2></div>
       <textarea id="note" placeholder="${esc(t('d.note.ph'))}" aria-label="${t('d.note')}">${esc(day ? day.note : '')}</textarea>
     </section>`;
   },
@@ -810,13 +823,12 @@ Views.diary = {
 Views.day = Views.diary;
 
 function diaryMood(tot, tk, key) {
-  const en = Store.state.settings.lang === 'en';
-  if (!tot.kcal) return key === todayKey() ? (en ? 'a blank page' : 'чистый лист') : (en ? 'nothing written' : 'ничего не записано');
+  if (!tot.kcal) return key === todayKey() ? tr('чистый лист', 'a blank page', 'toza varaq') : tr('ничего не записано', 'nothing written', 'hech narsa yozilmagan');
   const p = tot.kcal / tk;
-  if (p < .5) return en ? 'just getting started' : 'день только начинается';
-  if (p < .9) return en ? 'steady pace' : 'ровный темп';
-  if (p <= 1.05) return en ? 'right on target' : 'точно в цель';
-  return en ? 'a generous day' : 'щедрый день';
+  if (p < .5) return tr('день только начинается', 'just getting started', 'kun endi boshlanmoqda');
+  if (p < .9) return tr('ровный темп', 'steady pace', 'bir tekis sur’at');
+  if (p <= 1.05) return tr('точно в цель', 'right on target', 'aynan nishonga');
+  return tr('щедрый день', 'a generous day', 'saxiy kun');
 }
 
 function mealCard(key, m, day, i) {
@@ -877,8 +889,8 @@ Views.add = {
             <div class="list" style="margin-top:12px">${my.length ? my.map((x, i) => `<button class="pill" data-my="${i}"><span class="tick">${ICON.plus}</span>${esc(x.name)}</button>`).join('') : `<p class="muted" style="margin:0">${t('foods.empty.my')}</p>`}</div></div>
           <div class="card dark rv blob" style="--d:4;--bx:80%;--by:90%;min-height:180px;border-radius:var(--r)">
             <div style="position:relative;z-index:1;display:grid;gap:10px">
-              <span class="mono" style="color:#cfd3db">/ ${Store.state.settings.lang === 'en' ? 'tip' : 'совет'}</span>
-              <p class="serif" style="font-size:28px;line-height:1.05;margin:0">${Store.state.settings.lang === 'en' ? 'Shoot from above with a fork or a hand in frame — portions come out more accurate.' : 'Снимай сверху и держи в кадре вилку или ладонь — так порция оценивается точнее.'}</p>
+              <span class="mono" style="color:#cfd3db">/ ${tr('совет', 'tip', 'maslahat')}</span>
+              <p class="serif" style="font-size:28px;line-height:1.05;margin:0">${tr('Снимай сверху и держи в кадре вилку или ладонь — так порция оценивается точнее.', 'Shoot from above with a fork or a hand in frame — portions come out more accurate.', 'Yuqoridan suratga oling va kadrda sanchqi yoki kaftingiz bo‘lsin — shunda porsiya aniqroq baholanadi.')}</p>
             </div>
           </div>
         </div>
@@ -1016,7 +1028,7 @@ function cameraSheet({ left = 4, onPhotos, onFallback }) {
 
 function photosHtml(photos) {
   if (!photos.length) return `<div>
-    <div class="h3">${UI.split(Store.state.settings.lang === 'en' ? 'Drop a photo here' : 'Перетащи фото сюда')}</div>
+    <div class="h3">${UI.split(tr('Перетащи фото сюда', 'Drop a photo here', 'Suratni shu yerga tashlang'))}</div>
     <p class="mono muted" style="margin:8px 0 0">JPEG · PNG · WebP · HEIC · ≤ 10 MB · ≤ 4</p>
     <div class="acts"><button class="pill" data-gal>${ICON.image.replace('<svg', '<svg width="18" height="18"')} ${t('add.photo')}</button><button class="pill" data-cam>${ICON.camera.replace('<svg', '<svg width="18" height="18"')} ${t('add.camera')}</button></div></div>`;
   return `<div class="thumbs">${photos.map((p, i) => `<div class="thumb"><img src="${p.thumb}" alt=""><button data-delph="${i}" aria-label="${t('res.delete')}">${ICON.x}</button></div>`).join('')}${photos.length < 4 ? `<button class="thumb addmore" data-cam aria-label="${t('add.camera')}">${ICON.camera.replace('<svg', '<svg width="24" height="24"')}</button><button class="thumb addmore" data-gal aria-label="${t('add.photo')}">${ICON.plus.replace('<svg', '<svg width="22" height="22"')}</button>` : ''}</div>`;
@@ -1073,6 +1085,7 @@ async function runAnalysis(host, answers) {
 // «1 позиция», «2 позиции», «5 позиций» / «1 item», «2 items»
 function itemsLabel(n) {
   if (Store.state.settings.lang === 'en') return `${n} ${n === 1 ? 'item' : 'items'}`;
+  if (Store.state.settings.lang === 'uz') return `${n} ta pozitsiya`;
   const m10 = n % 10, m100 = n % 100;
   const w = m10 === 1 && m100 !== 11 ? 'позиция' : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? 'позиции' : 'позиций';
   return `${n} ${w}`;
@@ -1089,7 +1102,7 @@ Views.result = {
       <div class="res">
         <div class="photos rv">
           ${d.photos.map(p => `<img src="${p.full}" alt="">`).join('')}
-          ${d.text ? `<div class="card inputq"><span class="kicker">${Store.state.settings.lang === 'en' ? 'you wrote' : 'ты написал(а)'}</span><p>«${esc(d.text)}»</p></div>` : ''}
+          ${d.text ? `<div class="card inputq"><span class="kicker">${tr('ты написал(а)', 'you wrote', 'siz yozdingiz')}</span><p>«${esc(d.text)}»</p></div>` : ''}
           <div class="seg" id="rmeal">${MEALS.map(m => `<button aria-pressed="${m === d.meal}" data-m="${m}">${t('meal.' + m)}</button>`).join('')}</div>
         </div>
         <div>
@@ -1297,7 +1310,7 @@ Views.stats = {
     const rules = { kcal: 'band', protein_g: 'min', fat_g: 'band', carbs_g: 'band', fiber_g: 'min', sugar_g: 'max', sat_fat_g: 'max', sodium_mg: 'max', cholesterol_mg: 'max' };
     return `
       <span class="kicker">${t('stats.title')}</span>
-      <div class="datebar" style="margin-top:12px"><h1 class="h1">${UI.split(N === 7 ? (Store.state.settings.lang === 'en' ? 'Seven days' : 'Семь дней') : (Store.state.settings.lang === 'en' ? 'Thirty days' : 'Тридцать дней'), 'hoverable')}</h1>
+      <div class="datebar" style="margin-top:12px"><h1 class="h1">${UI.split(N === 7 ? tr('Семь дней', 'Seven days', 'Yetti kun') : tr('Тридцать дней', 'Thirty days', 'O‘ttiz kun'), 'hoverable')}</h1>
       <div class="seg" id="per"><button aria-pressed="${N === 7}" data-n="7">${t('stats.week')}</button><button aria-pressed="${N === 30}" data-n="30">${t('stats.month')}</button></div></div>
       <div class="kpis section" style="margin-top:26px">
         <div class="kpi dark rv"><span>${t('n.kcal')} · ${t('stats.avg')}</span><b class="num" data-count="${Math.round(avg('kcal'))}">0</b></div>
@@ -1572,7 +1585,7 @@ Views.chat = {
     const h = Store.state.chat;
     return `
       <span class="kicker">${t('chat.title')}</span>
-      <div class="datebar" style="margin-top:12px"><h1 class="h1">${UI.split(Store.state.settings.lang === 'en' ? 'Ask me anything' : 'Спроси меня', 'hoverable')}</h1>
+      <div class="datebar" style="margin-top:12px"><h1 class="h1">${UI.split(tr('Спроси меня', 'Ask me anything', 'Mendan so‘rang'), 'hoverable')}</h1>
         ${h.length ? `<button class="pill ghosty" id="cclear">${t('chat.clear')}</button>` : ''}</div>
       <div class="chat">
         <div class="msgs" id="msgs">
@@ -1649,7 +1662,7 @@ Views.settings = {
         <div class="card rv" style="--d:2"><h3 class="h3">${t('set.units')}</h3>
           <div class="field"><span>${t('set.mass')}</span><div class="seg" data-set="mass"><button aria-pressed="${st.mass === 'g'}" data-v="g">${I18N[st.lang]['u.g']}</button><button aria-pressed="${st.mass === 'oz'}" data-v="oz">${I18N[st.lang]['u.oz']}</button></div></div>
           <div class="field"><span>${t('set.body')}</span><div class="seg" data-set="body"><button aria-pressed="${st.body === 'kg'}" data-v="kg">${I18N[st.lang]['u.kg']}</button><button aria-pressed="${st.body === 'lb'}" data-v="lb">${I18N[st.lang]['u.lb']}</button></div></div>
-          <div class="field"><span>${t('set.lang')}</span><div class="seg" data-set="lang"><button aria-pressed="${st.lang === 'ru'}" data-v="ru">Русский</button><button aria-pressed="${st.lang === 'en'}" data-v="en">English</button></div></div>
+          <div class="field"><span>${t('set.lang')}</span><div class="seg" data-set="lang"><button aria-pressed="${st.lang === 'ru'}" data-v="ru">Русский</button><button aria-pressed="${st.lang === 'en'}" data-v="en">English</button><button aria-pressed="${st.lang === 'uz'}" data-v="uz">O‘zbekcha</button></div></div>
           <div class="field"><span>${t('set.theme')}</span><div class="seg" data-set="theme">${['auto', 'light', 'dark'].map(v => `<button aria-pressed="${(st.theme || 'auto') === v}" data-v="${v}">${t('theme.' + v)}</button>`).join('')}</div></div>
           <div class="field"><span>${t('set.tz')}</span><span class="pill ghosty" style="justify-self:start">${esc(tz)}</span></div>
         </div>
@@ -1666,7 +1679,7 @@ Views.settings = {
 
         <div class="card wide rv" style="--d:4"><h3 class="h3">${t('set.data')}</h3>
           <p class="lead" style="margin:0">${t('set.data.lead')}</p>
-          <p class="muted" style="margin:0"><a href="${policyHref()}" target="_blank" rel="noopener">${t('priv.name')}</a>${s.settings.aiConsent ? ` · ${t('ai.consent.given', { date: new Date(s.settings.aiConsent.at).toLocaleDateString(locale()) })} <button class="link" id="aiwithdraw">${t('ai.consent.withdraw')}</button>` : ''}</p>
+          <p class="muted" style="margin:0"><a href="${policyHref()}" target="_blank" rel="noopener">${t('priv.name')}</a>${s.settings.aiConsent ? ` · ${t('ai.consent.given', { date: fmtDate(new Date(s.settings.aiConsent.at)) })} <button class="link" id="aiwithdraw">${t('ai.consent.withdraw')}</button>` : ''}</p>
           <div class="row">
             <button class="btn" id="dcsv">${t('set.csv')}<span class="arr">${ICON.arrow}</span></button>
             <button class="btn light" id="djson">${t('set.json')}<span class="arr">${ICON.arrow}</span></button>

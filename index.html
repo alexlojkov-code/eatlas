@@ -39,7 +39,7 @@
     try { var th = (JSON.parse(localStorage.getItem('nutrilens.v1') || '{}').settings || {}).theme || 'auto';
       document.documentElement.dataset.theme = th === 'auto' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : th; } catch (e) {}
   </script>
-  <link rel="stylesheet" href="css/styles.css?v=45">
+  <link rel="stylesheet" href="css/styles.css?v=47">
 </head>
 <body>
   <div id="preloader" aria-hidden="true">
@@ -55,15 +55,16 @@
   <div id="modal" class="modal"></div>
   <div id="toasts" aria-live="polite"></div>
 
-  <script src="js/foods.js?v=45"></script>
-  <script src="js/i18n.js?v=45"></script>
-  <script src="js/dishes.js?v=45"></script>
-  <script src="js/profiles.js?v=45"></script>
-  <script src="js/core.js?v=45"></script>
-  <script src="js/ai.js?v=45"></script>
-  <script src="js/catalog.js?v=45"></script>
-  <script src="js/cloud.js?v=45"></script>
-  <script src="js/app.js?v=45"></script>
-  <script src="js/migrate.js?v=45"></script>
+  <script src="js/foods.js?v=47"></script>
+  <script src="js/i18n.js?v=47"></script>
+  <script src="js/catalog-uz.js?v=47"></script>
+  <script src="js/dishes.js?v=47"></script>
+  <script src="js/profiles.js?v=47"></script>
+  <script src="js/core.js?v=47"></script>
+  <script src="js/ai.js?v=47"></script>
+  <script src="js/catalog.js?v=47"></script>
+  <script src="js/cloud.js?v=47"></script>
+  <script src="js/app.js?v=47"></script>
+  <script src="js/migrate.js?v=47"></script>
 </body>
 </html>

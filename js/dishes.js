@@ -194,4 +194,4 @@ FOOD_DB.push(...[
 Object.entries({ borscht: 'UA', shchi: 'RU', solyanka: 'RU', okroshka: 'RU', plov: 'UZ', olivier: 'RU', vinegret: 'RU', pelmeni: 'RU', khinkali: 'GE', blini: 'RU', syrniki: 'RU', sushi: 'JP', shawarma: 'LB', pizza: 'IT', burger: 'US', hummus: 'LB', croissant: 'FR', greek_salad: 'GR', caesar: 'MX' })
   .forEach(([id, c]) => { const f = FOOD_DB.find(x => x.id === id); if (f) f.cuisine = c; });
 
-const cuisineName = code => code && CUISINES[code] ? CUISINES[code][Store.state.settings.lang === 'en' ? 1 : 0] : '';
+const cuisineName = code => !code || !CUISINES[code] ? '' : Store.state.settings.lang === 'uz' ? UZ_CATALOG.countries[code] || CUISINES[code][0] : CUISINES[code][Store.state.settings.lang === 'en' ? 1 : 0];

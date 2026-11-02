@@ -151,8 +151,11 @@ const Catalog = {
     const list = items.slice(0, n), short = list.map(e => this.shortName(e));
     return list.map((e, i) => short.indexOf(short[i]) !== short.lastIndexOf(short[i]) ? this.name(e) : short[i]);
   },
-  catName(c) { return (catEn() && this.data.cats_en ? this.data.cats_en : this.data.cats)[c]; },
-  tagsOf(e) { return catEn() && this.data.tags_en ? e.tags.map(x => this.data.tags_en[this.data.tags.indexOf(x)]) : e.tags; },
+  catName(c) { return catUz() ? UZ_CATALOG.cats[c] || this.data.cats[c] : (catEn() && this.data.cats_en ? this.data.cats_en : this.data.cats)[c]; },
+  tagsOf(e) {
+    const alt = catUz() ? UZ_CATALOG.tags : catEn() ? this.data.tags_en : null;
+    return alt ? e.tags.map(x => alt[this.data.tags.indexOf(x)] || x) : e.tags;
+  },
 
   // аллергены и пометки; халяль не утверждаем — только «без свинины и алкоголя»
   diet(e) {
@@ -251,8 +254,9 @@ const Catalog = {
 };
 
 const catEn = () => Store.state.settings.lang === 'en';
-// группа: [id, название, регион, тип, название en, регион en]
-const groupFullName = g => (catEn() && g[4]) || g[1];
+const catUz = () => Store.state.settings.lang === 'uz';
+// группа: [id, название, регион, тип, название en, регион en]; узбекские — в js/catalog-uz.js
+const groupFullName = g => (catEn() && g[4]) || (catUz() && UZ_CATALOG.groups[g[0]] && UZ_CATALOG.groups[g[0]][0]) || g[1];
 const groupShortName = g => String(groupFullName(g)).split(' (')[0];
 const groupSubName = g => { const m = String(groupFullName(g)).match(/\((.+)\)/); return m ? m[1] : ''; };
-const groupRegion = g => (catEn() && g[5]) || g[2];
+const groupRegion = g => (catEn() && g[5]) || (catUz() && UZ_CATALOG.groups[g[0]] && UZ_CATALOG.groups[g[0]][1]) || g[2];

@@ -4,10 +4,10 @@
    send   {lang}            — ещё раз отправить письмо для подтверждения почты (нужен вход)
    verify {token}           — подтвердить почту по ссылке из письма (вход не нужен: ссылку могут открыть на другом устройстве) */
 import { route, body, db, send, problem, normEmail, validEmail, passwordProblem, hashPassword, createSession, currentSession, publicUser, sha256, clientIp, takeDaily } from '../_lib/server.js';
-import { mailReady, sendMail, letter, appUrl, issueToken, recentTokens, sendVerification, TOKENS_PER_HOUR } from '../_lib/mail.js';
+import { mailReady, sendMail, letter, appUrl, issueToken, recentTokens, sendVerification, TOKENS_PER_HOUR, mailLang } from '../_lib/mail.js';
 
 const MAIL_PER_IP_DAY = 20; // писем о сбросе с одного IP за сутки — чтобы форму не использовали для рассылки по чужим ящикам
-const lang = b => (b.lang === 'en' ? 'en' : 'ru');
+const lang = b => mailLang(b.lang);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 async function forgot(req, res, b) {

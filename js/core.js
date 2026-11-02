@@ -15,14 +15,14 @@ const todayKey = () => dateKey(new Date());
 const parseKey = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
 const addDays = (k, n) => { const d = parseKey(k); d.setDate(d.getDate() + n); return dateKey(d); };
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const normalize = s => String(s || '').toLowerCase().replace(/ё/g, 'е').replace(/(\d)\s*%/g, '$1%').replace(/[^a-zа-я0-9%.,\s]/g, ' ').replace(/\s+/g, ' ').trim();
+const normalize = s => String(s || '').toLowerCase().replace(/ё/g, 'е').replace(/[ʻʼ‘’'`]/g, '').replace(/(\d)\s*%/g, '$1%').replace(/[^a-zа-я0-9%.,\s]/g, ' ').replace(/\s+/g, ' ').trim();
 
 /* ---------- store ---------- */
 const defaultState = () => ({
   version: 1,
   profile: null,
   targets: null,
-  settings: { lang: 'ru', mass: 'g', body: 'kg', apiKey: '', model: 'gemini-3.8-flash', photoPolicy: '30', theme: 'auto', onboarded: false, createdAt: Date.now() },
+  settings: { lang: /^uz\b/i.test((typeof navigator !== 'undefined' && navigator.language) || '') ? 'uz' : 'ru', mass: 'g', body: 'kg', apiKey: '', model: 'gemini-3.8-flash', photoPolicy: '30', theme: 'auto', onboarded: false, createdAt: Date.now() },
   days: {},
   myFoods: [],
   recent: [],
@@ -161,7 +161,7 @@ const bodyIn = v => Store.state.settings.body === 'lb' ? Number(v) * LB : Number
 const bodyUnit = () => Store.state.settings.body === 'lb' ? t('u.lb') : t('u.kg');
 
 /* ---------- food matching ---------- */
-const STOP = new Set(['с', 'и', 'на', 'в', 'из', 'без', 'под', 'по', 'со', 'для', 'with', 'and', 'of', 'in', 'on', 'the', 'a', 'без']);
+const STOP = new Set(['с', 'и', 'на', 'в', 'из', 'без', 'под', 'по', 'со', 'для', 'with', 'and', 'of', 'in', 'on', 'the', 'a', 'без', 'va', 'bilan']);
 const DB_INDEX = FOOD_DB.map(f => ({ f, al: f.aliases.map(a => normalize(a).split(' ')) }));
 
 // Слова способа приготовления/состояния, которые не меняют выбор продукта в базе
@@ -209,28 +209,30 @@ function searchFoods(query, limit = 12) {
 }
 
 /* ---------- local text parser (без ИИ) ---------- */
-const NUM_WORDS = { 'один': 1, 'одна': 1, 'одно': 1, 'одну': 1, 'два': 2, 'две': 2, 'три': 3, 'четыре': 4, 'пять': 5, 'шесть': 6, 'половина': 0.5, 'половинка': 0.5, 'пол': 0.5, 'полтора': 1.5, 'полторы': 1.5, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'half': 0.5, 'a': 1, 'an': 1 };
+const NUM_WORDS = { 'один': 1, 'одна': 1, 'одно': 1, 'одну': 1, 'два': 2, 'две': 2, 'три': 3, 'четыре': 4, 'пять': 5, 'шесть': 6, 'половина': 0.5, 'половинка': 0.5, 'пол': 0.5, 'полтора': 1.5, 'полторы': 1.5, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'half': 0.5, 'a': 1, 'an': 1,
+  // узбекские (апостроф уже убран normalize: toʻrt → tort)
+  'bir': 1, 'ikki': 2, 'uch': 3, 'tort': 4, 'besh': 5, 'olti': 6, 'yarim': 0.5 };
 const UNITS = [
-  { re: /^(кг|килограмм\S*|kg)$/, kind: 'mass', k: 1000 },
-  { re: /^(г|гр|грамм\S*|g|gr|grams?)$/, kind: 'mass', k: 1 },
-  { re: /^(л|литр\S*|l|liters?|litres?)$/, kind: 'vol', k: 1000 },
-  { re: /^(мл|миллилитр\S*|ml)$/, kind: 'vol', k: 1 },
+  { re: /^(кг|килограмм\S*|kg|kilogramm\S*)$/, kind: 'mass', k: 1000 },
+  { re: /^(г|гр|грамм\S*|g|gr|grams?|gramm\S*)$/, kind: 'mass', k: 1 },
+  { re: /^(л|литр\S*|l|liters?|litres?|litr\S*)$/, kind: 'vol', k: 1000 },
+  { re: /^(мл|миллилитр\S*|ml|millilitr\S*)$/, kind: 'vol', k: 1 },
   { re: /^(oz|унц\S*)$/, kind: 'mass', k: OZ },
-  { re: /^(шт|штук\S*|штуки|pcs?|pieces?|x)$/, kind: 'piece' },
-  { re: /^(стакан\S*|кружк\S*|чашк\S*|cups?|glass\S*|mugs?)$/, kind: 'cup' },
+  { re: /^(шт|штук\S*|штуки|pcs?|pieces?|x|dona\S*|ta)$/, kind: 'piece' },
+  { re: /^(стакан\S*|кружк\S*|чашк\S*|cups?|glass\S*|mugs?|stakan\S*|piyola\S*|krujka\S*)$/, kind: 'cup' },
   { re: /^(ст\.?л\.?|столов\S*|tbsp|tablespoons?)$/, kind: 'tbsp' },
   { re: /^(ч\.?л\.?|чайн\S*|tsp|teaspoons?)$/, kind: 'tsp' },
-  { re: /^(ложк\S*|ложечк\S*|spoons?)$/, kind: 'spoon' },
-  { re: /^(кус\S*|ломт\S*|долек|дольк\S*|slices?|pieces?)$/, kind: 'slice' },
-  { re: /^(тарелк\S*|миск\S*|bowls?)$/, kind: 'bowl' },
-  { re: /^(порци\S*|servings?|portions?)$/, kind: 'portion' },
-  { re: /^(горст\S*|handfuls?)$/, kind: 'handful' },
-  { re: /^(бутылк\S*|bottles?|банк\S*|cans?)$/, kind: 'bottle' },
+  { re: /^(ложк\S*|ложечк\S*|spoons?|qoshiq\S*)$/, kind: 'spoon' },
+  { re: /^(кус\S*|ломт\S*|долек|дольк\S*|slices?|pieces?|bolak\S*|tilim\S*)$/, kind: 'slice' },
+  { re: /^(тарелк\S*|миск\S*|bowls?|kosa\S*|likopcha\S*|tarelka\S*)$/, kind: 'bowl' },
+  { re: /^(порци\S*|servings?|portions?|porsiya\S*)$/, kind: 'portion' },
+  { re: /^(горст\S*|handfuls?|hovuch\S*)$/, kind: 'handful' },
+  { re: /^(бутылк\S*|bottles?|банк\S*|cans?|shisha\S*|butilka\S*|banka\S*)$/, kind: 'bottle' },
 ];
 
 function splitInput(text) {
   // запятая делит позиции, кроме десятичной «1,5»
-  return String(text).split(/,(?!\d)|(?<!\d),|;|\n|\+|\s+и\s+|\s+and\s+|\s+плюс\s+/i).map(s => s.trim()).filter(Boolean);
+  return String(text).split(/,(?!\d)|(?<!\d),|;|\n|\+|\s+и\s+|\s+and\s+|\s+va\s+|\s+плюс\s+/i).map(s => s.trim()).filter(Boolean);
 }
 
 function parseChunk(chunk) {
@@ -249,8 +251,8 @@ function parseChunk(chunk) {
     const u = !unit && UNITS.find(u => u.re.test(w.replace(/\.$/, '')));
     if (u && (qty !== null || ['cup', 'tbsp', 'tsp', 'spoon', 'slice', 'bowl', 'portion', 'handful', 'bottle'].includes(u.kind))) {
       // «ст. ложка» / «ч. ложка»
-      if (u.kind === 'spoon' && out.length && /^(ст|столов)/.test(out[out.length - 1])) { out.pop(); unit = UNITS.find(x => x.kind === 'tbsp'); continue; }
-      if (u.kind === 'spoon' && out.length && /^(ч|чайн)/.test(out[out.length - 1])) { out.pop(); unit = UNITS.find(x => x.kind === 'tsp'); continue; }
+      if (u.kind === 'spoon' && out.length && /^(ст|столов|osh$)/.test(out[out.length - 1])) { out.pop(); unit = UNITS.find(x => x.kind === 'tbsp'); continue; }
+      if (u.kind === 'spoon' && out.length && /^(ч|чайн|choy$)/.test(out[out.length - 1])) { out.pop(); unit = UNITS.find(x => x.kind === 'tsp'); continue; }
       unit = u; continue;
     }
     if (w === 'ст' || w === 'ч') { out.push(w); continue; }

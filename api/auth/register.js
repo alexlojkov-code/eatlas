@@ -1,6 +1,6 @@
 /* POST /api/auth/register — создать аккаунт и сразу войти; на почту уходит письмо для её подтверждения */
 import { route, body, db, send, problem, normEmail, validEmail, passwordProblem, hashPassword, createSession, publicUser } from '../_lib/server.js';
-import { mailReady, sendVerification } from '../_lib/mail.js';
+import { mailReady, sendVerification, mailLang } from '../_lib/mail.js';
 
 export default route(['POST'], async (req, res) => {
   const b = body(req);
@@ -22,6 +22,6 @@ export default route(['POST'], async (req, res) => {
   await createSession(req, res, rows[0].id);
   // письмо — по возможности: если почта не настроена или не дошла, аккаунт всё равно создан, письмо можно запросить ещё раз
   let verifySent = false;
-  if (mailReady()) { try { await sendVerification(rows[0], b.lang === 'en' ? 'en' : 'ru'); verifySent = true; } catch (e) { console.error('verify mail', e); } }
+  if (mailReady()) { try { await sendVerification(rows[0], mailLang(b.lang)); verifySent = true; } catch (e) { console.error('verify mail', e); } }
   send(res, 201, { user: publicUser(rows[0]), verify_sent: verifySent });
 });
