@@ -1,4 +1,4 @@
-/* Создаёт таблицы NutriLens в базе Neon. Безопасно запускать повторно.
+/* Создаёт таблицы Eatlas в базе Neon. Безопасно запускать повторно.
    Запуск: DATABASE_URL=... node scripts/migrate.mjs */
 import { neon } from '@neondatabase/serverless';
 

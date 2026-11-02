@@ -1,8 +1,8 @@
-# NutriLens — личный дневник питания
+# Eatlas — личный дневник питания
 
-> Проект целиком создан **Claude** (Anthropic) в Claude Code по PRD и техспецификации NutriLens.
+> Проект целиком создан **Claude** (Anthropic) в Claude Code по PRD и техспецификации (прежнее рабочее название — NutriLens).
 
-**Открыть дневник:** https://nutrilens-orcin-seven.vercel.app — полная версия: ИИ-ассистент, регистрация и синхронизация · **Варианты логотипа:** https://nutrilens-orcin-seven.vercel.app/logos.html
+**Открыть дневник:** https://nutrilens-orcin-seven.vercel.app — полная версия: ИИ-ассистент, регистрация и синхронизация
 
 Дневник работает в двух режимах:
 - **без аккаунта** — всё хранится только в браузере (`localStorage` и IndexedDB);
@@ -94,4 +94,3 @@ python3 scripts/build_catalog.py      # после правки catalog.json и�
 ## Прочее
 
 - Тема: светлая, тёмная или как в системе — кнопка в шапке или «Настройки → Единицы».
-- `logos.html` — варианты логотипа: http://localhost:5173/logos.html

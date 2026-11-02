@@ -1,4 +1,4 @@
-/* NutriLens — строки интерфейса (ru / en) */
+/* Eatlas — строки интерфейса (ru / en) */
 const I18N = {
   ru: {
     'app.diary': 'Дневник', 'app.of': 'дневник питания',
@@ -9,7 +9,7 @@ const I18N = {
     'u.g': 'г', 'u.oz': 'унц', 'u.kg': 'кг', 'u.lb': 'фунт', 'u.kcal': 'ккал', 'u.mg': 'мг', 'u.cm': 'см',
     'pre.loading': 'открываю дневник',
     'onb.kicker': 'Личный дневник питания', 'onb.hello': 'Привет. Это твой дневник.',
-    'onb.lead': 'Всё, что ты сюда запишешь, остаётся только в этом браузере. Никаких аккаунтов, никаких серверов — только ты и твоя тарелка.',
+    'onb.lead': 'Всё, что ты сюда запишешь, остаётся только в этом браузере. Никаких аккаунтов, никаких серверов — только ты и твои блюда.',
     'onb.start': 'Начать', 'onb.step': 'Шаг', 'onb.next': 'Дальше', 'onb.back': 'Назад', 'onb.done': 'Открыть дневник',
     'onb.s1': 'О тебе', 'onb.s2': 'Активность', 'onb.s3': 'Цель', 'onb.s4': 'Твоя норма',
     'onb.name': 'Как подписать дневник', 'onb.name.ph': 'Имя или псевдоним',
@@ -80,7 +80,7 @@ const I18N = {
     'mig.hint': 'Если новый адрес открылся вместо этой страницы или перенос не начался (так бывает во встроенных браузерах Telegram, Instagram и др.), вернитесь сюда, скачайте копию и восстановите её на новом адресе: Настройки → Восстановить из копии.',
     'set.wipe.q': 'Удалить дневник, профиль, фото и ключ из этого браузера? Это нельзя отменить.', 'set.wipe.ok': 'Удалить всё', 'set.cancel': 'Отмена',
     'set.imported': 'Данные восстановлены', 'set.saved': 'Сохранено', 'set.low': 'Норма ниже {n} ккал — это небезопасно без наблюдения врача. Посоветуйся со специалистом.',
-    'set.disclaimer': 'NutriLens даёт приблизительные оценки и не является медицинским сервисом. При заболеваниях и особых диетах ориентируйся на рекомендации врача.',
+    'set.disclaimer': 'Eatlas даёт приблизительные оценки и не является медицинским сервисом. При заболеваниях и особых диетах ориентируйся на рекомендации врача.',
     'err.storage': 'Не удалось сохранить: хранилище браузера недоступно или переполнено',
     'err.NO_FOOD_DETECTED': 'Не вижу здесь еды. Попробуй другое фото или опиши блюдо текстом.',
     'err.IMAGE_TOO_LARGE': 'Фото больше 10 МБ', 'err.UNSUPPORTED_FORMAT': 'Формат не поддерживается — нужен JPEG, PNG, WebP или HEIC',
@@ -149,7 +149,7 @@ const I18N = {
     'u.g': 'g', 'u.oz': 'oz', 'u.kg': 'kg', 'u.lb': 'lb', 'u.kcal': 'kcal', 'u.mg': 'mg', 'u.cm': 'cm',
     'pre.loading': 'opening the diary',
     'onb.kicker': 'A personal food diary', 'onb.hello': 'Hi. This is your diary.',
-    'onb.lead': 'Everything you write here stays in this browser only. No accounts, no servers — just you and your plate.',
+    'onb.lead': 'Everything you write here stays in this browser only. No accounts, no servers — just you and your meals.',
     'onb.start': 'Start', 'onb.step': 'Step', 'onb.next': 'Next', 'onb.back': 'Back', 'onb.done': 'Open the diary',
     'onb.s1': 'About you', 'onb.s2': 'Activity', 'onb.s3': 'Goal', 'onb.s4': 'Your target',
     'onb.name': 'Sign the diary as', 'onb.name.ph': 'Name or nickname',
@@ -220,7 +220,7 @@ const I18N = {
     'mig.hint': 'If the new address replaced this page or the move didn’t start (this happens in in-app browsers like Telegram or Instagram), come back here, download a backup and restore it at the new address: Settings → Restore from backup.',
     'set.wipe.q': 'Delete the diary, profile, photos and key from this browser? This can’t be undone.', 'set.wipe.ok': 'Delete everything', 'set.cancel': 'Cancel',
     'set.imported': 'Data restored', 'set.saved': 'Saved', 'set.low': 'A target below {n} kcal is unsafe without medical supervision. Please consult a professional.',
-    'set.disclaimer': 'NutriLens gives approximate estimates and is not a medical service. With health conditions or special diets, follow your doctor’s advice.',
+    'set.disclaimer': 'Eatlas gives approximate estimates and is not a medical service. With health conditions or special diets, follow your doctor’s advice.',
     'err.storage': 'Could not save: browser storage is unavailable or full',
     'err.NO_FOOD_DETECTED': 'I don’t see any food here. Try another photo or describe the dish.',
     'err.IMAGE_TOO_LARGE': 'Photo is larger than 10 MB', 'err.UNSUPPORTED_FORMAT': 'Unsupported format — use JPEG, PNG, WebP or HEIC',

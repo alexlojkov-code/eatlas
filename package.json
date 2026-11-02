@@ -1,7 +1,7 @@
 {
-  "name": "nutrilens",
+  "name": "eatlas",
   "private": true,
-  "description": "NutriLens — личный дневник питания с ИИ. Создан Claude (Anthropic).",
+  "description": "Eatlas — личный дневник питания с ИИ. Создан Claude (Anthropic).",
   "type": "module",
   "engines": {
     "node": "22.x"

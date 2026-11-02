@@ -35,4 +35,4 @@ createServer(async (req, res) => {
     console.error(e);
     res.statusCode = 500; res.end('error');
   }
-}).listen(PORT, '127.0.0.1', () => console.log(`NutriLens dev: http://localhost:${PORT}`));
+}).listen(PORT, '127.0.0.1', () => console.log(`Eatlas dev: http://localhost:${PORT}`));

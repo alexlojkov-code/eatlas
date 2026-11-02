@@ -1,5 +1,5 @@
-/* NutriLens — письма аккаунта: одноразовые ссылки и отправка через Resend.
-   RESEND_API_KEY — ключ Resend; MAIL_FROM — отправитель, например «NutriLens <noreply@ваш-домен>».
+/* Eatlas — письма аккаунта: одноразовые ссылки и отправка через Resend.
+   RESEND_API_KEY — ключ Resend; MAIL_FROM — отправитель, например «Eatlas <noreply@ваш-домен>».
    Без своего домена Resend разрешает только отправителя onboarding@resend.dev и только на ящик владельца аккаунта Resend.
    APP_URL — адрес сайта для ссылок в письмах (не берём из заголовка Host, чтобы ссылку нельзя было подменить).
    MAIL_URL — только для локальных тестов: подменяет адрес API Resend. */
@@ -18,7 +18,7 @@ export async function sendMail({ to, subject, html, text }) {
   const r = await fetch(MAIL_URL, {
     method: 'POST',
     headers: { authorization: `Bearer ${process.env.RESEND_API_KEY || 'test'}`, 'content-type': 'application/json' },
-    body: JSON.stringify({ from: process.env.MAIL_FROM || 'NutriLens <onboarding@resend.dev>', to: [to], subject, html, text }),
+    body: JSON.stringify({ from: process.env.MAIL_FROM || 'Eatlas <onboarding@resend.dev>', to: [to], subject, html, text }),
     signal: AbortSignal.timeout(10000),
   });
   if (!r.ok) {
@@ -44,13 +44,13 @@ export async function issueToken(userId, kind, email) {
 /* ---------- письма ---------- */
 const T = {
   ru: {
-    reset: { subject: 'Сброс пароля NutriLens', title: 'Сброс пароля', lead: 'Кто-то (надеемся, вы) запросил сброс пароля для аккаунта NutriLens. Нажмите кнопку, чтобы задать новый пароль.', btn: 'Задать новый пароль', note: 'Ссылка действует 1 час и сработает один раз. Если вы не запрашивали сброс — просто проигнорируйте письмо, пароль останется прежним.' },
-    verify: { subject: 'Подтвердите почту для NutriLens', title: 'Подтвердите почту', lead: 'Это письмо подтверждает, что адрес принадлежит вам. Так вы сможете восстановить пароль, если забудете его.', btn: 'Подтвердить почту', note: 'Ссылка действует 24 часа. Если вы не регистрировались в NutriLens — просто проигнорируйте письмо.' },
+    reset: { subject: 'Сброс пароля Eatlas', title: 'Сброс пароля', lead: 'Кто-то (надеемся, вы) запросил сброс пароля для аккаунта Eatlas. Нажмите кнопку, чтобы задать новый пароль.', btn: 'Задать новый пароль', note: 'Ссылка действует 1 час и сработает один раз. Если вы не запрашивали сброс — просто проигнорируйте письмо, пароль останется прежним.' },
+    verify: { subject: 'Подтвердите почту для Eatlas', title: 'Подтвердите почту', lead: 'Это письмо подтверждает, что адрес принадлежит вам. Так вы сможете восстановить пароль, если забудете его.', btn: 'Подтвердить почту', note: 'Ссылка действует 24 часа. Если вы не регистрировались в Eatlas — просто проигнорируйте письмо.' },
     hi: name => (name ? `Здравствуйте, ${name}!` : 'Здравствуйте!'), alt: 'Если кнопка не работает, откройте ссылку:',
   },
   en: {
-    reset: { subject: 'Reset your NutriLens password', title: 'Reset your password', lead: 'Someone (hopefully you) asked to reset the password for your NutriLens account. Tap the button to set a new one.', btn: 'Set a new password', note: 'The link works once and expires in 1 hour. If you didn’t ask for a reset, ignore this email — your password stays the same.' },
-    verify: { subject: 'Confirm your email for NutriLens', title: 'Confirm your email', lead: 'This confirms the address belongs to you, so you can recover your password if you ever forget it.', btn: 'Confirm email', note: 'The link expires in 24 hours. If you didn’t sign up for NutriLens, just ignore this email.' },
+    reset: { subject: 'Reset your Eatlas password', title: 'Reset your password', lead: 'Someone (hopefully you) asked to reset the password for your Eatlas account. Tap the button to set a new one.', btn: 'Set a new password', note: 'The link works once and expires in 1 hour. If you didn’t ask for a reset, ignore this email — your password stays the same.' },
+    verify: { subject: 'Confirm your email for Eatlas', title: 'Confirm your email', lead: 'This confirms the address belongs to you, so you can recover your password if you ever forget it.', btn: 'Confirm email', note: 'The link expires in 24 hours. If you didn’t sign up for Eatlas, just ignore this email.' },
     hi: name => (name ? `Hi ${name},` : 'Hi,'), alt: 'If the button doesn’t work, open this link:',
   },
 };
@@ -62,7 +62,7 @@ export function letter(kind, lang, url, name = '') {
   const html = `<!doctype html><html><body style="margin:0;background:#E8E9ED;font-family:Arial,Helvetica,sans-serif;color:#0B0B0C">
 <table width="100%" cellpadding="0" cellspacing="0" style="padding:32px 12px"><tr><td align="center">
 <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#FBFBFD;border-radius:24px;padding:36px 32px">
-<tr><td style="font:700 15px Arial,sans-serif;letter-spacing:.5px">NUTRI<span style="color:#5C8A00">LENS</span></td></tr>
+<tr><td style="font:700 15px Arial,sans-serif;letter-spacing:.5px">EAT<span style="color:#5C8A00">LAS</span></td></tr>
 <tr><td style="padding-top:28px;font:900 30px Arial,sans-serif;text-transform:uppercase">${k.title}</td></tr>
 <tr><td style="padding-top:16px;font:16px/1.5 Arial,sans-serif">${hi}<br>${k.lead}</td></tr>
 <tr><td style="padding-top:26px"><a href="${escHtml(url)}" style="display:inline-block;background:#BEFF4F;color:#0B0B0C;text-decoration:none;font:700 16px Arial,sans-serif;padding:16px 26px;border-radius:999px">${k.btn} →</a></td></tr>

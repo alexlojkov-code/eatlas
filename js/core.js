@@ -1,4 +1,4 @@
-/* NutriLens — ядро: хранилище в браузере, расчёты, разбор текста, фото. */
+/* Eatlas — ядро: хранилище в браузере, расчёты, разбор текста, фото. */
 
 const STORE_KEY = 'nutrilens.v1';
 const MEALS = ['breakfast', 'lunch', 'dinner', 'snack'];
@@ -398,11 +398,11 @@ function exportCSV() {
       rows.push([k, m, `"${String(it.name).replace(/"/g, '""')}"`, round1(it.grams), ...NUTRIENT_KEYS.map(x => round1(n[x])), it.source, round1(it.confidence || 0), it.origin].join(','));
     }));
   });
-  download(`nutrilens-${todayKey()}.csv`, '﻿' + rows.join('\n'), 'text/csv');
+  download(`eatlas-${todayKey()}.csv`, '﻿' + rows.join('\n'), 'text/csv');
 }
 function exportJSON() {
   const s = Object.assign({}, Store.state, { settings: Object.assign({}, Store.state.settings, { apiKey: '' }) });
-  download(`nutrilens-backup-${todayKey()}.json`, JSON.stringify(s, null, 1), 'application/json');
+  download(`eatlas-backup-${todayKey()}.json`, JSON.stringify(s, null, 1), 'application/json');
 }
 function download(name, text, type) {
   const a = document.createElement('a');

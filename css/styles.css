@@ -1,4 +1,4 @@
-/* NutriLens — личный дневник питания
+/* Eatlas — личный дневник питания
    Типографика: Roboto Flex (переменная ширина/вес — сжатые заголовки, «дышащие» буквы),
    Cormorant Garamond italic — рукописный голос дневника, JetBrains Mono — служебные метки. */
 
@@ -615,18 +615,11 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 
 .cuisines .pill small { font-family: var(--mono); font-size: 11px; color: var(--mute); }
 .cuisines .pill.on small { color: inherit; opacity: .7; }
 
-/* логотип: монограмма NL — линия «пишется» одним росчерком, точка-линза появляется следом */
-.brand .logo { background: none; width: 40px; height: 40px; color: var(--fg); }
-.brand:hover .logo { transform: none; }
-.brand .logo svg { width: 36px; height: 36px; overflow: visible; }
-.mono-path { stroke-dasharray: 150; stroke-dashoffset: 0; animation: monoDraw 1.4s var(--ease) both .2s; }
-.mono-dot { transform-box: fill-box; transform-origin: center; animation: monoDot .7s var(--ease-out) both 1.3s; }
-.brand:hover .mono-path { animation: monoDraw2 1.1s var(--ease) both; }
-.brand:hover .mono-dot { animation: monoDot2 .6s var(--ease-out) both .8s; }
-@keyframes monoDraw { from { stroke-dashoffset: 150; } to { stroke-dashoffset: 0; } }
-@keyframes monoDraw2 { from { stroke-dashoffset: 150; } to { stroke-dashoffset: 0; } }
-@keyframes monoDot { from { transform: scale(0); } 60% { transform: scale(1.4); } to { transform: scale(1); } }
-@keyframes monoDot2 { from { transform: scale(0); } 60% { transform: scale(1.4); } to { transform: scale(1); } }
+/* логотип: лаймовая плашка EAT/LAS — появляется с лёгким пружинящим масштабом, при наведении наклоняется */
+.brand .logo { background: none; width: 38px; height: 38px; border-radius: 9px; }
+.brand .logo svg { width: 38px; height: 38px; display: block; animation: logoIn .7s var(--ease-out) both .2s; }
+.brand:hover .logo { transform: rotate(-8deg); }
+@keyframes logoIn { from { transform: scale(0); } 60% { transform: scale(1.12); } to { transform: scale(1); } }
 
 /* ===================== Телефон (до 600 px) ===================== */
 @media (max-width: 600px) {

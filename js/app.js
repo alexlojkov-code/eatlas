@@ -1,4 +1,4 @@
-/* NutriLens — интерфейс: роутер, экраны, анимации. */
+/* Eatlas — интерфейс: роутер, экраны, анимации. */
 
 const ICON = {
   arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
@@ -21,7 +21,7 @@ const ICON = {
   search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>',
   sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>',
   moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"/></svg>',
-  mono: '<svg viewBox="0 0 64 64" aria-hidden="true"><path class="mono-path" d="M13 52 V12 L36 52 V12 M36 52 H54" fill="none" stroke="currentColor" stroke-width="7" stroke-linejoin="miter"/><circle class="mono-dot" cx="50" cy="17" r="5.5" fill="#BEFF4F"/></svg>',
+  mono: '<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#BEFF4F"/><path fill="#0B0B0C" d="M15.6 29H25.11V25.39H19.77V21.71H24.25V18.14H19.77V14.86H24.99V11.23H15.6Z M25.39 29H29.55L31.39 18.81Q31.46 18.35 31.53 17.51Q31.6 16.66 31.64 16.38H31.69Q31.74 16.66 31.81 17.51Q31.89 18.35 31.96 18.81L33.86 29H38.28L34.39 11.19H29.3ZM28.28 25.59H35.34L34.8 22.47H28.81Z M38.31 14.86H41.65V29H46.01V14.86H49.35V11.23H38.31Z M15.41 53H24.5V49.37H19.72V35.23H15.41Z M24.53 53H28.69L30.53 42.81Q30.6 42.35 30.67 41.51Q30.74 40.66 30.78 40.38H30.83Q30.88 40.66 30.95 41.51Q31.02 42.35 31.1 42.81L33 53H37.42L33.53 35.19H28.43ZM27.42 49.59H34.48L33.94 46.47H27.95Z M37.82 48.36Q37.82 50.88 39.38 52.08Q40.93 53.28 43.54 53.28Q46.17 53.28 47.69 51.98Q49.21 50.69 49.21 48.08Q49.21 45.65 48.02 44.31Q46.83 42.98 44.71 41.95Q43.25 41.23 42.8 40.74Q42.36 40.25 42.36 39.6Q42.36 38.9 42.65 38.58Q42.95 38.27 43.58 38.27Q44.21 38.27 44.52 38.68Q44.83 39.09 44.83 39.84V40.71H48.91V39.68Q48.91 37.48 47.49 36.21Q46.07 34.94 43.52 34.94Q40.96 34.94 39.45 36.19Q37.94 37.44 37.94 39.87Q37.94 41.96 39.16 43.28Q40.38 44.59 42.42 45.6Q43.99 46.4 44.43 46.93Q44.87 47.46 44.87 48.36Q44.87 49.25 44.51 49.64Q44.16 50.03 43.48 50.03Q42.8 50.03 42.43 49.6Q42.06 49.18 42.06 48.25V47.23H37.82Z"/></svg>',
 };
 
 /* ---------- UI helpers ---------- */
@@ -210,9 +210,9 @@ const Shell = {
     top.hidden = dock.hidden = onb;
     const active = name === 'day' || name === 'meal' ? 'diary' : name;
     top.innerHTML = `
-      <a class="brand" href="#/" aria-label="NutriLens">
+      <a class="brand" href="#/" aria-label="Eatlas">
         <span class="logo">${ICON.mono}</span>
-        <span><b>NutriLens</b><br><span class="serif">${esc(t('app.of'))}${ownerName() ? ' · ' + esc(ownerName()) : ''}</span></span>
+        <span><b>Eatlas</b><br><span class="serif">${esc(t('app.of'))}${ownerName() ? ' · ' + esc(ownerName()) : ''}</span></span>
       </a>
       <nav class="nav" aria-label="main">${NAV.map(([k, h]) => `<a href="${h}" class="${active === k ? 'on' : ''}">${t('nav.' + k)}</a>`).join('')}</nav>
       ${Cloud.user ? syncBadge() : ''}
@@ -424,8 +424,8 @@ Views.welcome = {
   html() {
     if (onb.step === 0 && Cloud.user) { onb.step = 1; onb.name = onb.name || Cloud.user.name || ''; } // уже вошёл — сразу к анкете
     const s = onb.step;
-    const ghost = `<div class="ghost outline" aria-hidden="true"><div class="track"><span>NutriLens · ${t('app.diary')} · </span><span>NutriLens · ${t('app.diary')} · </span></div></div>`;
-    const head = `<div class="row" style="position:relative;z-index:1"><span class="brand"><span class="logo">${ICON.mono}</span><b>NutriLens</b></span><span class="spacer"></span>${themeBtn()}
+    const ghost = `<div class="ghost outline" aria-hidden="true"><div class="track"><span>Eatlas · ${t('app.diary')} · </span><span>Eatlas · ${t('app.diary')} · </span></div></div>`;
+    const head = `<div class="row" style="position:relative;z-index:1"><span class="brand"><span class="logo">${ICON.mono}</span><b>Eatlas</b></span><span class="spacer"></span>${themeBtn()}
       <div class="seg" id="olang"><button aria-pressed="${Store.state.settings.lang === 'ru'}" data-l="ru">RU</button><button aria-pressed="${Store.state.settings.lang === 'en'}" data-l="en">EN</button></div></div>`;
     if (s === 0) return `<div class="onb">${head}
       <div class="content">
@@ -535,7 +535,7 @@ const resetOnb = () => { onb = { step: 0, name: '', sex: 'f', age: '', height: '
 
 /* Текст ошибки сервера по коду; неизвестный код — общая ошибка */
 const errMsg = ex => { const m = t('err.' + ((ex && ex.code) || 'SERVER_ERROR')); return m.startsWith('err.') ? t('err.SERVER_ERROR') : m; };
-const authTop = () => `<div class="row" style="position:relative;z-index:1"><a class="brand" href="#/"><span class="logo">${ICON.mono}</span><b>NutriLens</b></a><span class="spacer"></span>${themeBtn()}</div>`;
+const authTop = () => `<div class="row" style="position:relative;z-index:1"><a class="brand" href="#/"><span class="logo">${ICON.mono}</span><b>Eatlas</b></a><span class="spacer"></span>${themeBtn()}</div>`;
 
 /* «Забыл пароль?» — письмо со ссылкой для нового пароля */
 function forgotSheet(prefill = '') {
@@ -566,7 +566,7 @@ Views.reset = {
     if (r.parts[1]) resetToken = r.parts[1];
     return `<div class="onb auth">${authTop()}
       <div class="content">
-        <span class="kicker rv">NutriLens · ${t('auth.forgot.title').toLowerCase()}</span>
+        <span class="kicker rv">Eatlas · ${t('auth.forgot.title').toLowerCase()}</span>
         <h1 class="h1">${UI.split(t('auth.reset.title'), 'hoverable')}</h1>
         <p class="lead rv" style="--d:3">${t('auth.reset.lead')}</p>
         <form class="card authform rv" id="rsf" style="--d:5" novalidate>
@@ -625,7 +625,7 @@ Views.verify = {
     if (r.parts[1]) { verifyToken = r.parts[1]; verifyOk = false; }
     return `<div class="onb auth">${authTop()}
       <div class="content">
-        <span class="kicker rv">NutriLens · ${t('auth.verify.title').toLowerCase()}</span>
+        <span class="kicker rv">Eatlas · ${t('auth.verify.title').toLowerCase()}</span>
         <h1 class="h1" id="vh">${UI.split(t(verifyOk ? 'auth.verify.ok' : 'auth.verify.title'), 'hoverable')}</h1>
         <p class="lead rv" id="vlead" role="status" style="--d:3">${t(verifyOk ? 'auth.verify.okLead' : 'auth.verify.wait')}</p>
         <div class="row rv" id="vrow" style="--d:5"></div>
@@ -657,9 +657,9 @@ Views.auth = {
   html(r) {
     const reg = r.q.mode === 'register';
     return `<div class="onb auth">
-      <div class="row" style="position:relative;z-index:1"><a class="brand" href="#/"><span class="logo">${ICON.mono}</span><b>NutriLens</b></a><span class="spacer"></span>${themeBtn()}</div>
+      <div class="row" style="position:relative;z-index:1"><a class="brand" href="#/"><span class="logo">${ICON.mono}</span><b>Eatlas</b></a><span class="spacer"></span>${themeBtn()}</div>
       <div class="content">
-        <span class="kicker rv">NutriLens · ${t(reg ? 'auth.register' : 'auth.login').toLowerCase()}</span>
+        <span class="kicker rv">Eatlas · ${t(reg ? 'auth.register' : 'auth.login').toLowerCase()}</span>
         <h1 class="h1">${UI.split(t(reg ? 'auth.register' : 'auth.login'), 'hoverable')}</h1>
         <p class="lead rv" style="--d:3">${t(reg ? 'auth.lead.register' : 'auth.lead.login')}</p>
         <form class="card authform rv" id="authf" style="--d:5" novalidate>

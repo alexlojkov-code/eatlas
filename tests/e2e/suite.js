@@ -1,4 +1,4 @@
-/* Автономные сквозные тесты NutriLens (E2E).
+/* Автономные сквозные тесты Eatlas (E2E).
    Запускаются прямо в открытой странице сайта (локальный сервер разработки):
      const m = await import('/tests/e2e/suite.js?' + Date.now());
      const report = await m.run({ chaos: false });      // обычный прогон

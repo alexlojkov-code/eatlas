@@ -1,4 +1,4 @@
-/* NutriLens — общая серверная часть: база Neon, пароли, сессии, ответы.
+/* Eatlas — общая серверная часть: база Neon, пароли, сессии, ответы.
    Файлы в api/_lib не становятся отдельными функциями Vercel (префикс «_»). */
 import { neon } from '@neondatabase/serverless';
 import { randomBytes, createHash, scrypt as scryptCb, timingSafeEqual } from 'node:crypto';
