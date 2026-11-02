@@ -8,7 +8,7 @@ import { db, sha256 } from './server.js';
 
 const MAIL_URL = process.env.MAIL_URL || 'https://api.resend.com/emails';
 export const mailReady = () => !!(process.env.RESEND_API_KEY || process.env.MAIL_URL);
-export const appUrl = () => (process.env.APP_URL || 'https://nutrilens-orcin-seven.vercel.app').replace(/\/$/, '');
+export const appUrl = () => (process.env.APP_URL || 'https://eatlas-app.vercel.app').replace(/\/$/, '');
 
 export const TOKEN_MINUTES = { reset: 60, verify: 24 * 60 };
 export const TOKENS_PER_HOUR = 3; // писем одного вида одному пользователю за час

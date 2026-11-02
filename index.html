@@ -7,9 +7,10 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Eatlas — дневник</title>
   <script>
-    // копия на GitHub Pages — без сервера (нет ИИ и аккаунтов): уводим на основной сайт.
-    // Если здесь уже есть дневник без аккаунта и он ещё не перенесён — остаёмся: js/migrate.js предложит перенос.
-    if (/\.github\.io$/.test(location.hostname)) {
+    // старые адреса (копия на GitHub Pages и прежний адрес на Vercel) уводим на основной сайт.
+    // Если там уже есть дневник без переноса — остаёмся: js/migrate.js предложит перенести его.
+    var nlGh = /\.github\.io$/.test(location.hostname);
+    if (nlGh || location.hostname === 'nutrilens-orcin-seven.vercel.app') {
       var nlHasDiary = false;
       try {
         var nlSt = JSON.parse(localStorage.getItem('nutrilens.v1') || 'null');
@@ -17,8 +18,8 @@
           (!!(nlSt.settings && nlSt.settings.onboarded) || Object.keys(nlSt.days || {}).length > 0);
       } catch (e) {}
       if (!nlHasDiary) {
-        // первый сегмент пути — имя репозитория, какое бы оно ни было
-        location.replace('https://nutrilens-orcin-seven.vercel.app' + location.pathname.replace(/^\/[^/]+/, '') + location.search + location.hash);
+        // на GitHub Pages первый сегмент пути — имя репозитория, какое бы оно ни было
+        location.replace('https://eatlas-app.vercel.app' + (nlGh ? location.pathname.replace(/^\/[^/]+/, '') : location.pathname) + location.search + location.hash);
       }
     }
   </script>
@@ -31,7 +32,7 @@
     try { var th = (JSON.parse(localStorage.getItem('nutrilens.v1') || '{}').settings || {}).theme || 'auto';
       document.documentElement.dataset.theme = th === 'auto' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : th; } catch (e) {}
   </script>
-  <link rel="stylesheet" href="css/styles.css?v=44">
+  <link rel="stylesheet" href="css/styles.css?v=45">
 </head>
 <body>
   <div id="preloader" aria-hidden="true">
@@ -47,15 +48,15 @@
   <div id="modal" class="modal"></div>
   <div id="toasts" aria-live="polite"></div>
 
-  <script src="js/foods.js?v=44"></script>
-  <script src="js/i18n.js?v=44"></script>
-  <script src="js/dishes.js?v=44"></script>
-  <script src="js/profiles.js?v=44"></script>
-  <script src="js/core.js?v=44"></script>
-  <script src="js/ai.js?v=44"></script>
-  <script src="js/catalog.js?v=44"></script>
-  <script src="js/cloud.js?v=44"></script>
-  <script src="js/app.js?v=44"></script>
-  <script src="js/migrate.js?v=44"></script>
+  <script src="js/foods.js?v=45"></script>
+  <script src="js/i18n.js?v=45"></script>
+  <script src="js/dishes.js?v=45"></script>
+  <script src="js/profiles.js?v=45"></script>
+  <script src="js/core.js?v=45"></script>
+  <script src="js/ai.js?v=45"></script>
+  <script src="js/catalog.js?v=45"></script>
+  <script src="js/cloud.js?v=45"></script>
+  <script src="js/app.js?v=45"></script>
+  <script src="js/migrate.js?v=45"></script>
 </body>
 </html>

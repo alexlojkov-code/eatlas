@@ -1,13 +1,15 @@
-/* Eatlas — перенос дневника со старого адреса (GitHub Pages) на новый (Vercel).
+/* Eatlas — перенос дневника со старых адресов (GitHub Pages, прежний адрес на Vercel) на основной.
    Данные идут напрямую между вкладками через postMessage: без сервера и без ссылок с данными.
    Старая вкладка открывает новую, новая сообщает, что готова, получает дневник и фото,
    спрашивает подтверждение и объединяет их с тем, что уже есть у неё. */
 
 const MIG = {
-  OLD: 'https://alexlojkov-code.github.io',
-  NEW: 'https://nutrilens-orcin-seven.vercel.app',
+  OLD: ['https://alexlojkov-code.github.io', 'https://nutrilens-orcin-seven.vercel.app'],
+  NEW: 'https://eatlas-app.vercel.app',
   MOVED_KEY: 'nutrilens.moved',
 };
+// на GitHub Pages сайт лежит в папке репозитория — её в новом адресе нет
+const migPath = () => (/\.github\.io$/.test(location.hostname) ? location.pathname.replace(/^\/[^/]+/, '') : location.pathname);
 
 const migHasDiary = s => !!s && (!!s.settings.onboarded || Object.keys(s.days).length > 0);
 const migDayCount = s => Object.values(s.days).filter(d => MEALS.some(m => d.meals[m].length)).length;
@@ -20,7 +22,7 @@ async function migOfferOld() {
   if (moved || !migHasDiary(Store.state)) return;
   await migReady();
   await new Promise(r => setTimeout(r, 600));
-  const target = MIG.NEW + location.pathname.replace(/^\/[^/]+/, '') + location.search + location.hash;
+  const target = MIG.NEW + migPath() + location.search + location.hash;
   const sh = UI.modal(`<div class="kicker">${t('mig.k')}</div><h2 class="h2" style="margin:10px 0 14px">${t('mig.title')}</h2>
     <p class="lead">${t('mig.lead')}</p>
     <p class="lead" id="migmsg" role="status" style="margin-top:12px"></p>
@@ -94,7 +96,7 @@ function migAcceptNew() {
   if (!opener) return;
   let got = false;
   const onMsg = async e => {
-    if (got || e.origin !== MIG.OLD || e.source !== opener || !e.data || e.data.type !== 'nl-migrate-data') return;
+    if (got || !MIG.OLD.includes(e.origin) || e.source !== opener || !e.data || e.data.type !== 'nl-migrate-data') return;
     got = true;
     window.removeEventListener('message', onMsg);
     let inc;
@@ -115,7 +117,7 @@ function migAcceptNew() {
       for (const p of photos) await PhotoDB.tx('readwrite', st => st.put({ id: p.id, dataUrl: p.dataUrl, created: Number(p.created) || Date.now() })).catch(() => null);
       Store.save();
       document.documentElement.lang = Store.state.settings.lang;
-      try { opener.postMessage({ type: 'nl-migrate-done' }, MIG.OLD); } catch (err) {}
+      try { opener.postMessage({ type: 'nl-migrate-done' }, e.origin); } catch (err) {}
       UI.closeModal(); UI.toast(t('mig.ok'));
       Router.go(Store.state.settings.onboarded ? '#/' : '#/welcome');
       Router.silent = true; Router.render();
@@ -126,9 +128,9 @@ function migAcceptNew() {
   let n = 0;
   const ping = setInterval(() => {
     if (got || ++n > 40) return clearInterval(ping);
-    try { opener.postMessage({ type: 'nl-migrate-ready' }, MIG.OLD); } catch (err) { clearInterval(ping); }
+    try { MIG.OLD.forEach(o => opener.postMessage({ type: 'nl-migrate-ready' }, o)); } catch (err) { clearInterval(ping); }
   }, 500);
 }
 
-if (location.origin === MIG.OLD) migOfferOld();
+if (MIG.OLD.includes(location.origin)) migOfferOld();
 else if (location.origin === MIG.NEW) migAcceptNew();
