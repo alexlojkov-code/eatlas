@@ -1,8 +1,12 @@
+<img src="brand/eatlas-logo.svg" width="96" alt="Eatlas">
+
 # Eatlas — личный дневник питания
 
 > Проект целиком создан **Claude** (Anthropic) в Claude Code по PRD и техспецификации (прежнее рабочее название — NutriLens).
 
 **Открыть дневник:** https://eatlas-app.vercel.app — полная версия: ИИ-ассистент, регистрация и синхронизация
+
+**Промо и материалы:** [страница с файлами](https://github.com/alexlojkov-code/eatlas/releases/tag/materials) — промо-ролики на русском и английском (32 с, 1080p) и презентации проекта.
 
 Дневник работает в двух режимах:
 - **без аккаунта** — всё хранится только в браузере (`localStorage` и IndexedDB);
