@@ -1451,6 +1451,7 @@ function catalogGroupHtml(r) {
 function catalogGroupMount(el, r) {
   if (!Catalog.loaded) return;
   const gid = r.parts[2], list = $('#glist', el), q = $('#gq', el);
+  if (!list) return; // такой кухни нет — на экране только «Ничего не нашлось»
   const pick = e => {
     const b = e.target.closest('[data-id],[data-food]'); if (!b) return;
     if (b.dataset.id) logSheet(Catalog.toItem(Catalog.byId.get(b.dataset.id)));
