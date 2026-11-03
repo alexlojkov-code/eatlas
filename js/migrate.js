@@ -5,7 +5,7 @@
 
 const MIG = {
   OLD: ['https://alexlojkov-code.github.io', 'https://nutrilens-orcin-seven.vercel.app'],
-  NEW: 'https://eatlas-app.vercel.app',
+  NEW: NL_MAIN, // из js/boot.js
   MOVED_KEY: 'nutrilens.moved',
 };
 // на GitHub Pages сайт лежит в папке репозитория — её в новом адресе нет

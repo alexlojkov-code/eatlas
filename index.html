@@ -13,33 +13,12 @@
   <meta name="apple-mobile-web-app-title" content="Eatlas">
   <meta name="application-name" content="Eatlas">
   <title>Eatlas — дневник</title>
-  <script>
-    // старые адреса (копия на GitHub Pages и прежний адрес на Vercel) уводим на основной сайт.
-    // Если там уже есть дневник без переноса — остаёмся: js/migrate.js предложит перенести его.
-    var nlGh = /\.github\.io$/.test(location.hostname);
-    if (nlGh || location.hostname === 'nutrilens-orcin-seven.vercel.app') {
-      var nlHasDiary = false;
-      try {
-        var nlSt = JSON.parse(localStorage.getItem('nutrilens.v1') || 'null');
-        nlHasDiary = !!nlSt && localStorage.getItem('nutrilens.moved') !== '1' &&
-          (!!(nlSt.settings && nlSt.settings.onboarded) || Object.keys(nlSt.days || {}).length > 0);
-      } catch (e) {}
-      if (!nlHasDiary) {
-        // на GitHub Pages первый сегмент пути — имя репозитория, какое бы оно ни было
-        location.replace('https://eatlas-app.vercel.app' + (nlGh ? location.pathname.replace(/^\/[^/]+/, '') : location.pathname) + location.search + location.hash);
-      }
-    }
-  </script>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23BEFF4F'/%3E%3Cpath fill='%230B0B0C' d='M15.6 29H25.11V25.39H19.77V21.71H24.25V18.14H19.77V14.86H24.99V11.23H15.6Z M25.39 29H29.55L31.39 18.81Q31.46 18.35 31.53 17.51Q31.6 16.66 31.64 16.38H31.69Q31.74 16.66 31.81 17.51Q31.89 18.35 31.96 18.81L33.86 29H38.28L34.39 11.19H29.3ZM28.28 25.59H35.34L34.8 22.47H28.81Z M38.31 14.86H41.65V29H46.01V14.86H49.35V11.23H38.31Z M15.41 53H24.5V49.37H19.72V35.23H15.41Z M24.53 53H28.69L30.53 42.81Q30.6 42.35 30.67 41.51Q30.74 40.66 30.78 40.38H30.83Q30.88 40.66 30.95 41.51Q31.02 42.35 31.1 42.81L33 53H37.42L33.53 35.19H28.43ZM27.42 49.59H34.48L33.94 46.47H27.95Z M37.82 48.36Q37.82 50.88 39.38 52.08Q40.93 53.28 43.54 53.28Q46.17 53.28 47.69 51.98Q49.21 50.69 49.21 48.08Q49.21 45.65 48.02 44.31Q46.83 42.98 44.71 41.95Q43.25 41.23 42.8 40.74Q42.36 40.25 42.36 39.6Q42.36 38.9 42.65 38.58Q42.95 38.27 43.58 38.27Q44.21 38.27 44.52 38.68Q44.83 39.09 44.83 39.84V40.71H48.91V39.68Q48.91 37.48 47.49 36.21Q46.07 34.94 43.52 34.94Q40.96 34.94 39.45 36.19Q37.94 37.44 37.94 39.87Q37.94 41.96 39.16 43.28Q40.38 44.59 42.42 45.6Q43.99 46.4 44.43 46.93Q44.87 47.46 44.87 48.36Q44.87 49.25 44.51 49.64Q44.16 50.03 43.48 50.03Q42.8 50.03 42.43 49.6Q42.06 49.18 42.06 48.25V47.23H37.82Z'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&family=Cormorant+Garamond:ital,wght@0,500;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <script>
-    // тема до первой отрисовки — без вспышки светлого фона
-    try { var th = (JSON.parse(localStorage.getItem('nutrilens.v1') || '{}').settings || {}).theme || 'auto';
-      document.documentElement.dataset.theme = th === 'auto' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : th; } catch (e) {}
-  </script>
-  <link rel="stylesheet" href="css/styles.css?v=48">
+  <script src="js/boot.js?v=49"></script>
+  <link rel="stylesheet" href="css/styles.css?v=49">
 </head>
 <body>
   <div id="preloader" aria-hidden="true">
@@ -55,16 +34,16 @@
   <div id="modal" class="modal"></div>
   <div id="toasts" aria-live="polite"></div>
 
-  <script src="js/foods.js?v=48"></script>
-  <script src="js/i18n.js?v=48"></script>
-  <script src="js/catalog-uz.js?v=48"></script>
-  <script src="js/dishes.js?v=48"></script>
-  <script src="js/profiles.js?v=48"></script>
-  <script src="js/core.js?v=48"></script>
-  <script src="js/ai.js?v=48"></script>
-  <script src="js/catalog.js?v=48"></script>
-  <script src="js/cloud.js?v=48"></script>
-  <script src="js/app.js?v=48"></script>
-  <script src="js/migrate.js?v=48"></script>
+  <script src="js/foods.js?v=49"></script>
+  <script src="js/i18n.js?v=49"></script>
+  <script src="js/catalog-uz.js?v=49"></script>
+  <script src="js/dishes.js?v=49"></script>
+  <script src="js/profiles.js?v=49"></script>
+  <script src="js/core.js?v=49"></script>
+  <script src="js/ai.js?v=49"></script>
+  <script src="js/catalog.js?v=49"></script>
+  <script src="js/cloud.js?v=49"></script>
+  <script src="js/app.js?v=49"></script>
+  <script src="js/migrate.js?v=49"></script>
 </body>
 </html>
