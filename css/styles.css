@@ -192,8 +192,8 @@ main { padding: 8px var(--gutter) 80px; max-width: 1480px; margin: 0 auto; posit
   font-size: 14px; font-variation-settings: 'wdth' 92, 'wght' 500; border: 1.5px solid transparent; transition: background .25s, border-color .25s, transform .3s var(--ease-out);
   min-height: 40px; white-space: nowrap;
 }
-.pill:hover { border-color: var(--fg); }
-.pill.on, .pill[aria-pressed="true"] { background: var(--ink); color: var(--lime); }
+@media (hover: hover) { .pill:hover { border-color: var(--fg); } }
+.pill.on, .pill[aria-pressed="true"] { background: var(--pill-on-bg, var(--ink)); color: var(--pill-on-fg, var(--lime)); }
 .pill .tick { width: 22px; height: 22px; border-radius: 50%; background: var(--lime); display: grid; place-items: center; flex: none; }
 .pill .tick svg { width: 12px; height: 12px; }
 .pill.ghosty { background: transparent; border-color: var(--line); }
@@ -482,7 +482,7 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 
   background: var(--card); border-radius: var(--r); padding: 18px; text-align: left; display: grid; gap: 6px; border: 2px solid transparent;
   transition: transform .45s var(--ease-out), background .3s, border-color .3s; min-height: 120px; align-content: space-between; position: relative; overflow: hidden;
 }
-.choice:hover { transform: translateY(-4px); border-color: var(--fg); }
+@media (hover: hover) { .choice:hover { transform: translateY(-4px); border-color: var(--fg); } }
 .choice b { font-size: 26px; text-transform: uppercase; line-height: .95; font-variation-settings: 'wdth' 35, 'wght' 760, 'opsz' 144; }
 .choice span { font-family: var(--mono); font-size: 12px; color: var(--mute); }
 .choice .idx { font-family: var(--mono); font-size: 11px; }
@@ -554,7 +554,7 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 
 }
 
 /* таблетки и сегменты внутри белых карточек */
-.card .pill:not(.on):not(.warn), .meal .pill, .card .seg, .composer .seg { background: var(--bg); }
+.card .pill:not(.on):not([aria-pressed="true"]):not(.warn), .meal .pill, .card .seg, .composer .seg { background: var(--bg); }
 .card.dark .pill:not(.on) { background: #1c1d21; color: #fff; }
 .field .seg { justify-self: start; }
 .card .input, .card .select, .card .textarea, .sheet .tcell { background: var(--bg); }
@@ -587,7 +587,8 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 
 :root[data-theme="dark"] .btn.light { --bg-b: var(--card); --fg-b: var(--fg); }
 :root[data-theme="dark"] .btn.lime { --bg-b: var(--lime); --fg-b: #0B0B0C; }
 :root[data-theme="dark"] .btn .arr { background: var(--lime); color: #0B0B0C; }
-:root[data-theme="dark"] :is(.pill.on, .pill[aria-pressed="true"], .seg button[aria-pressed="true"], .nav a.on) { background: var(--lime); color: #0B0B0C; }
+:root[data-theme="dark"] { --pill-on-bg: var(--lime); --pill-on-fg: #0B0B0C; }
+:root[data-theme="dark"] :is(.seg button[aria-pressed="true"], .nav a.on) { background: var(--lime); color: #0B0B0C; }
 :root[data-theme="dark"] .choice[aria-pressed="true"] { background: #000; border-color: var(--lime); }
 :root[data-theme="dark"] .week a.on { background: #000; }
 :root[data-theme="dark"] .meal:hover { box-shadow: 0 24px 40px -24px rgba(0,0,0,.8); }
@@ -713,9 +714,7 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 
 .pill .tick, .tag.lime, .card.lime, .kpi.lime { --fg: #0B0B0C; --mute: #3A4420; color: #0B0B0C; }
 .kpi.lime { background: var(--lime); }
 /* Кнопки-ответы на лаймовой карточке: светлые с тёмным текстом, выбранная — чёрная с лаймовым; в обеих темах */
-.card.lime .pill:not(.on):not([aria-pressed="true"]) { background: #FBFBFD; color: #0B0B0C; }
-.card.lime .pill:hover { border-color: #0B0B0C; }
-:root .card.lime :is(.pill.on, .pill[aria-pressed="true"]) { background: #0B0B0C; color: var(--lime); }
+.card.lime { --bg: #FBFBFD; --ink: #0B0B0C; --pill-warn: #FFE3DB; --pill-on-bg: #0B0B0C; --pill-on-fg: var(--lime); }
 
 /* Контурная бегущая строка: обводка рисуется под заливкой цветом фона,
    поэтому внутренние линии перекрывающихся частей букв не видны — остаётся только внешний контур */
