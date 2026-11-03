@@ -13,6 +13,7 @@
      флаги: 1 — мл, 2 — вегетарианское, 4 — веганское, 8 — свинина, 16 — алкоголь в составе
   CATALOG.allergens — список аллергенов для маски
   CATALOG.cats_en, CATALOG.tags_en — английские названия категорий и тегов (параллельно cats, tags)
+  CATALOG.uz     — узбекские названия блюд из data/food_catalog/names_uz.json, параллельно items; '' — нет перевода
 """
 import json
 import pathlib
@@ -21,6 +22,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 SRC = ROOT / 'data' / 'food_catalog' / 'catalog.json'
 OUT = ROOT / 'js' / 'catalog-data.js'
 NUT = ROOT / 'data' / 'food_catalog' / 'nutrition.json'
+UZ = ROOT / 'data' / 'food_catalog' / 'names_uz.json'
 KEYS = ['kcal', 'protein_g', 'fat_g', 'carbs_g', 'fiber_g', 'sugar_g', 'sat_fat_g', 'sodium_mg', 'cholesterol_mg']
 ALLERGENS = ['gluten', 'milk', 'eggs', 'fish', 'crustaceans', 'molluscs', 'peanuts', 'tree_nuts', 'soy', 'sesame', 'celery', 'mustard', 'sulphites']
 
@@ -97,6 +99,7 @@ for g in groups:
     g += [GROUPS_EN[g[0]], REGIONS_EN[g[2]]]
 
 nut_src = json.loads(NUT.read_text(encoding='utf-8'))['items'] if NUT.exists() else {}
+uz_src = json.loads(UZ.read_text(encoding='utf-8'))['items'] if UZ.exists() else {}
 
 
 def num(v):
@@ -128,6 +131,7 @@ payload = {
     'cats_en': [CATS_EN[c] for c in cats],
     'tags_en': [TAGS_EN[t] for t in tags],
     'nut': nut,
+    'uz': [uz_src.get(it['id'], '') for it in items],
 }
 body = json.dumps(payload, ensure_ascii=False, separators=(',', ':'))
 OUT.write_text(

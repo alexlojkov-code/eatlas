@@ -1410,7 +1410,7 @@ const catSort = {
 const catSortHtml = (base) => `<div class="cuisines csort" id="gsort"><span class="mono muted">${t('cat.sort')}</span>${CAT_SORTS.map(v => `<button class="pill ${catSort.get() === v ? 'on' : ''}" data-s="${v}">${t(v === 'def' && base ? 'cat.sort.base' : 'cat.sort.' + v)}</button>`).join('')}</div>`;
 // name и kcal — функции, чтобы одинаково сортировать позиции каталога и продукты базы
 function sortCatalog(list, mode, name, kcal) {
-  if (mode === 'az') { const lang = Store.state.settings.lang === 'en' ? 'en' : 'ru'; return list.slice().sort((a, b) => name(a).localeCompare(name(b), lang)); }
+  if (mode === 'az') { const lang = Store.state.settings.lang; return list.slice().sort((a, b) => name(a).localeCompare(name(b), lang)); }
   if (mode === 'kdesc') return list.slice().sort((a, b) => kcal(b) - kcal(a));
   if (mode === 'kasc') return list.slice().sort((a, b) => kcal(a) - kcal(b));
   return list;
@@ -1480,7 +1480,7 @@ function catalogGroupMount(el, r) {
   const items = Catalog.groupItems(gi);
   let sel = r.q.c !== undefined && r.q.c !== '' ? Number(r.q.c) : null;
   const draw = () => {
-    const shown = items.filter(e => (sel === null || e.c === sel) && (!q.value.trim() || hit(e.name) || (e.en && hit(e.en))));
+    const shown = items.filter(e => (sel === null || e.c === sel) && (!q.value.trim() || hit(e.name) || (e.en && hit(e.en)) || (e.uz && hit(e.uz))));
     if (mode !== 'def') {
       // отсортированный список — одним блоком, без разбивки по разделам
       list.innerHTML = shown.length ? `<div class="clist" style="margin-top:4px">${catalogRows(sortCatalog(shown, mode, e => Catalog.name(e), catKcal))}</div>` : `<p class="muted">${t('cat.nothing')}</p>`;

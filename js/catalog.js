@@ -6,7 +6,7 @@
    3) если похожего нет — типовой состав категории («Супы», «Десерты», «Коктейли»…).
    Оценки честно помечаются в интерфейсе, с ИИ их можно уточнить. */
 
-const CAT_SCRIPT = 'js/catalog-data.js?v=3';
+const CAT_SCRIPT = 'js/catalog-data.js?v=4';
 const CAT_ALC = 1;
 // флаги CATALOG.nut[i][10]
 const NUT_ML = 1, NUT_VEG = 2, NUT_VEGAN = 4, NUT_PORK = 8, NUT_ALC = 16;
@@ -87,6 +87,8 @@ const Catalog = {
       };
       e.en = e.n ? e.n[13] : '';
       e.normEn = normalize(e.en);
+      e.uz = (C.uz && C.uz[i]) || '';
+      e.normUz = normalize(e.uz);
       this.byId.set(e.id, e);
       return e;
     });
@@ -143,7 +145,7 @@ const Catalog = {
   },
 
   // название на языке интерфейса
-  name(e) { return catEn() && e.en ? e.en : e.name; },
+  name(e) { return catEn() && e.en ? e.en : catUz() && e.uz ? e.uz : e.name; },
   // для превью в плитках — без пояснения в скобках
   shortName(e) { return this.name(e).split(' (')[0]; },
   // названия для превью плитки: короткие, а при совпадении — полные (Khorovats (pork) · Khorovats (lamb))
@@ -226,9 +228,9 @@ const Catalog = {
     const out = [];
     for (const e of this.list) {
       if (!this.visible(e)) continue;
-      // ищем и по русскому, и по английскому названию
+      // ищем по русскому, английскому и узбекскому названию
       let best = null;
-      for (const norm of e.normEn ? [e.norm, e.normEn] : [e.norm]) {
+      for (const norm of [e.norm, e.normEn, e.normUz].filter(Boolean)) {
         const ew = norm.split(' ');
         if (!words.every(w => ew.some(x => x.startsWith(w)))) continue;
         let s = 0;
