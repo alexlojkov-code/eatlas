@@ -249,11 +249,18 @@ scenario('Настройки: норма, язык, тема', async () => {
   await waitFor(() => $$('#dock a').some(a => /Diary/.test(a.innerText)), 'меню на английском');
   await click(btn('set.lang.ru', 'Русский', null, '[data-set="lang"] [data-v="ru"]'));
   await waitFor(() => $$('#dock a').some(a => /Дневник/.test(a.innerText)), 'меню снова на русском');
-  await click(btn('set.theme.dark', ['Тёмная', 'Темная'], null, '[data-set="theme"] [data-v="dark"]'));
-  await waitFor(() => document.documentElement.dataset.theme === 'dark', 'тёмная тема', 3000);
-  await sleep(900);
-  await click(btn('set.theme.auto', ['Как в системе', 'Авто'], null, '[data-set="theme"] [data-v="auto"]'));
-  await sleep(900);
+  // анимация темы (View Transitions) ждёт кадры, а в скрытой панели браузера их почти нет, и переходы встают в очередь.
+  // Поэтому проверяем саму смену и сохранение темы, без анимации: свойство на document заслоняет метод, delete его возвращает
+  document.startViewTransition = undefined;
+  try {
+    await click(btn('set.theme.dark', ['Тёмная', 'Темная'], null, '[data-set="theme"] [data-v="dark"]'));
+    await waitFor(() => document.documentElement.dataset.theme === 'dark', 'тёмная тема', 3000);
+    expect(Store.state.settings.theme === 'dark', 'тёмная тема не сохранилась в настройках');
+    await sleep(900);
+    await click(btn('set.theme.auto', ['Как в системе', 'Авто'], null, '[data-set="theme"] [data-v="auto"]'));
+    await waitFor(() => Store.state.settings.theme === 'auto', 'тема как в системе', 3000);
+    await sleep(900);
+  } finally { delete document.startViewTransition; }
 });
 
 scenario('Статистика: графики и запись веса', async () => {
@@ -348,6 +355,11 @@ scenario('Аккаунт: регистрация → синхронизация 
   await type(L('auth.name', { css: 'input[name="displayName"]', role: 'input', field: 'Как подписать дневник' }), 'E2E');
   await type(L('auth.email', { css: 'input[name="email"]', role: 'input', field: 'Email' }), email);
   await type(L('auth.password', { css: 'input[name="password"]', role: 'input', field: 'Пароль' }), pw1);
+  // без согласия с политикой форма не отправляется
+  await click(btn('auth.submit', 'Создать аккаунт', null, '#authf [type=submit]'));
+  await waitFor(() => $('#authf input[name="consent"]') && document.activeElement === $('#authf input[name="consent"]'), 'форма просит согласие');
+  expect(!Cloud.user, 'аккаунт создан без согласия с политикой');
+  $('#authf input[name="consent"]').click();
   await click(btn('auth.submit', 'Создать аккаунт', null, '#authf [type=submit]'));
   try {
     await waitFor(() => Cloud.user && Cloud.user.email === email, 'вход после регистрации', 10000);

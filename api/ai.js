@@ -97,7 +97,7 @@ async function firstEvent(r) {
     const left = deadline - Date.now();
     const step = left > 0 ? await Promise.race([reader.read(), new Promise(res => setTimeout(() => res('timeout'), left))]) : 'timeout';
     if (step === 'timeout') { reader.cancel().catch(() => {}); return null; }
-    if (step.done) break;
+    if (step.done) { if (!/^data:/m.test(text)) return null; break; } // закрыла поток, ничего не выдав — как и молчание, считаем занятой
     head.push(step.value); text += dec.decode(step.value, { stream: true });
     if (REAL_EVENT.test(text)) break;
   }
@@ -127,7 +127,7 @@ async function callGemini(payload) {
     if (r.ok && payload.stream) {
       const s = await firstEvent(r);
       if (s) return s;
-      console.warn('Gemini', model, 'stream: no text within', FIRST_EVENT_MS, 'ms');
+      console.warn('Gemini', model, 'stream: no text within', FIRST_EVENT_MS, 'ms or closed empty');
       await markBusy(model);
       r = new Response(JSON.stringify({ error: { message: 'All models are busy, try again shortly', code: 'service_unavailable' } }), { status: 503 });
       continue;
